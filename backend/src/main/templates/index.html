@@ -1,0 +1,523 @@
+<!-- Poorly written Front-end -->
+{% extends "base.html" %}
+{% load static %}
+{% block jquery %}
+var endpoint = '/api/chart'
+var defaultData = []
+var labels = []
+$.ajax({
+    method: 'GET',
+    url: endpoint,
+    success: function (response_data) {
+        OUR_IPS_labels = response_data.OUR_IPS_labels
+        OUR_IPS_items = response_data.OUR_IPS_items
+        FROM_labels = response_data.FROM_labels
+        FROM_items = response_data.FROM_items
+        console.log(response_data.FROM_items)
+        CATEGORY_labels = response_data.CATEGORY_labels
+        CATEGORY_items = response_data.CATEGORY_items
+        DATE_labels = response_data.DATE_labels
+        DATE_items = response_data.DATE_items
+        setChart()
+    },
+    error: function (error_data) {
+        console.log('error')
+        console.log(error_data)
+    }
+})
+function setChart() {
+    var ctx1 = document.getElementById('chartLocalAddresses');
+    var chartLocalAddresses = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: OUR_IPS_labels,
+            datasets: [{
+                data: OUR_IPS_items,
+                label: 'Total count',
+                backgroundColor: ['rgba(255, 0, 0, 0.2)', 'rgba(255, 255, 0, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(123, 19, 64, 0.2)', 'rgba(120, 240, 0, 0.2)', 'rgba(25, 200, 255, 0.2)', 'rgba(0, 255, 0, 0.2)'],
+                borderColor: ['rgba(255, 0, 0, 1)', 'rgba(255, 255, 0, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(123, 19, 64, 1)', 'rgba(120, 240, 0, 1)', 'rgba(25, 200, 255, 1)', 'rgba(0, 255, 0, 1)'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }]
+            }
+        }
+    })
+    var ctx2 = document.getElementById('fromMail');
+    var fromMail = new Chart(ctx2, {
+        type: 'horizontalBar',
+        data: {
+            labels: FROM_labels,
+            datasets: [{
+                label: 'Total',
+                data: FROM_items,
+                backgroundColor: ['rgba(255, 0, 0, 0.2)', 'rgba(255, 255, 0, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(123, 19, 64, 0.2)', 'rgba(120, 240, 0, 0.2)', 'rgba(25, 200, 255, 0.2)', 'rgba(0, 255, 0, 0.2)'],
+                borderColor: ['rgba(255, 0, 0, 1)', 'rgba(255, 255, 0, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(123, 19, 64, 1)', 'rgba(120, 240, 0, 1)', 'rgba(25, 200, 255, 1)', 'rgba(0, 255, 0, 1)'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }]
+            }
+        }
+    })
+
+    var ctx3 = document.getElementById('chartCategory');
+    var chartCategory = new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: CATEGORY_labels,
+            datasets: [{
+                label: 'Top mail',
+                data: CATEGORY_items,
+                backgroundColor: ['rgba(255, 0, 0, 0.2)', 'rgba(255, 255, 0, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'],
+                borderColor: ['rgba(255, 0, 0, 1)', 'rgba(255, 255, 0, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }]
+            }
+        }
+    })
+
+    var ctx4 = document.getElementById('chartDate');
+    var chartDate = new Chart(ctx4, {
+        type: 'line',
+        data: {
+            labels: DATE_labels,
+            datasets: [{
+                label: 'Received mails',
+                data: DATE_items,
+                backgroundColor: ['rgba(255, 0, 0, 0.2)'],
+                borderColor: ['rgba(255, 0, 0, 1)'],
+                borderWidth: 2,
+                steppedLine: 'true'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }]
+            }
+        }
+    })
+}
+{% endblock %}
+
+{% block content %}
+
+<!--Begin Page Content-->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Topbar Search -->
+    <form
+        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+        <div class="input-group">
+            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+
+        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+        <li class="nav-item dropdown no-arrow d-sm-none">
+            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+            </a>
+            <!-- Dropdown - Messages -->
+            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-light border-0 small"
+                            placeholder="Search for..." aria-label="Search"
+                            aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </li>
+
+        <!-- Nav Item - Alerts -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                {% if fields.total_new_mails %}
+                    <span class="badge badge-danger badge-counter">{{ fields.total_new_mails }}+</span>
+                {% else %}
+                    <span class="badge badge-danger badge-counter"></span>
+                {% endif %}
+                <span class="badge badge-danger badge-counter"></span>
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                    New mails
+                </h6>
+                {% for key, value in fields.new_mails.items %}
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="mr-3">
+                            <div class="icon-circle bg-warning">
+                                <i class="fas fa-exclamation-triangle text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-500">{{ value.date }}</div>
+                            <span class="font-weight-bold">{{ value.subject }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+            </div>
+        </li>
+
+
+        <div class="topbar-divider d-none d-sm-block"></div>
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Byambadalai Sumiya</span>
+                <img class="img-profile rounded-circle" src="{% static 'img/me.jpg' %}">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Logout
+                </a>
+            </div>
+        </li>
+
+    </ul>
+
+</nav>
+<!-- End of Topbar -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <form action="" method="GET">
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" name="exportData"
+                value="True">
+                <i class="fas fa-download fa-sm text-white-50"></i> Export Data</button>
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" name="syncData"
+            value="True">
+            <i class="fas fa-sync fa-sm text-white-50"></i> Sync Mails</button>
+        </form>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Mail</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if fields.total_mail %}
+                                    {{ fields.total_mail }}
+                                {% else %}
+                                    <div class="text-muted">
+                                        Loading
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                        {% if fields.tasks %}
+                                            {{ fields.tasks }}
+                                        {% else %}
+                                            <div class="text-muted">
+                                                Loading
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%"
+                                            aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Unique Mails</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if fields.unique_mail %}
+                                    {{ fields.unique_mail }}
+                                {% else %}
+                                    <div class="text-muted">
+                                        Loading
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Lost assets</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if fields.lost_assets %}
+                                    {{ fields.lost_assets }}
+                                {% else %}
+                                    <div class="text-muted">
+                                        Loading
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-8 col-lg-8">
+            <div class="card shadow mb-4" style="height: 450px;">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Time range</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">General</div>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">To do</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="chartDate"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card shadow mb-4" style="height: 450px;">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">From mails</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">General</div>
+                            <form action="" method="GET">
+                                <button class="dropdown-item" value="sendMailTop1" type="submit" name="sendMail">Send
+                                    mail (1)</button>
+                                <button class="dropdown-item" value="sendMailTop2" type="submit" name="sendMail">Send
+                                    mail (2)</button>
+                                <button class="dropdown-item" value="sendMailTop3" type="submit" name="sendMail">Send
+                                    mail (3)</button>
+                            </form>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">To do</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie">
+                        <canvas id="fromMail" height="300"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Category</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">General</div>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">To do</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="chartCategory"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Our local IP addresses</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">General</div>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">To do</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="chartLocalAddresses"></canvas>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> To do
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> To do
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> To do
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> To do
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> To do
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> To do
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+    {% endblock content %}

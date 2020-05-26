@@ -1,0 +1,407 @@
+<!-- Poorly written Front-end -->
+{% extends "base.html" %}
+{% load static %}
+{% block jquery %}
+<!-- Begin JQuery -->
+$.ajax({
+    method: 'GET',
+    url: '/api',
+    success: function(response_data) {
+        data = response_data
+        data = Object.assign([], data).reverse()
+        console.log(data['1']['SENDQUICK'])
+        setTable()
+    },
+    error: function(error_data) {
+        console.log(error_data)
+    }
+})
+function setTable() {
+$.each( data, function(index, value) {
+    try {
+        if (typeof(value['CATEGORY']) !== 'undefined') {
+            var cardCategory = "<div id='card-category-"+index+"'></div>"
+        }
+        if (typeof(value['OUR_ADDRESS']) !== 'undefined') {
+            var cardOurAddress = "<div id='card-our_address-"+index+"'></div>"
+        }
+    } catch (err) {    }
+    
+    var card = "<div id='card-"+index+"' class='card w-100 card-general'></div>"
+    var cardBody = "<div id='card-body-"+index+"' class='card-body'>\
+        <div class='row'>\
+            <div class='col-2 border border-primary rounded-pill'>\
+                <span style='font-weight:bold'>Status</span>&nbsp;&nbsp;\
+                <form action='' method='get' style='display:inline;'>\
+                    <button type='submit' name='action' value='done-"+index+"' style='border:none; background: none;'>\
+                        <i class='fas fa-check-circle' id='mailDone-"+index+"'></i>\
+                    </button>\
+                </form>\
+                <i class='fas fa-cog' id='forwardMail-"+index+"'></i>&nbsp;&nbsp;\
+                <i class='fas fa-reply-all' id='sendQuick-"+index+"'></i>&nbsp;&nbsp;\
+            </div>\
+            <div class='col-6 border border-primary rounded-pill'id='card-from-"+index+"' style='font-style:italic;'>\
+            </div>\
+            <div class='col-2 border border-danger rounded-pill card-detail' id='card-category-"+index+"'>\
+            </div>\
+            <div class='col-2 border border-success rounded-pill card-detail' id='card-our_address-"+index+"'>\
+            </div>\
+        </div>\
+        <div class='row cardSecondRow'>\
+            <div class='col-10 card-text border border-primary rounded' id='card-subject-"+index+"' style='font-family:ubuntu; font-weight: normal;'>\
+                <div class='border float-right' id='card-time-"+index+"' style='margin-top:100px;'></div>\
+            </div>\
+            <div class='col-2'>\
+                <form action='' method='get'>\
+                    <button type='submit' class='btn btn-success btn-icon-split btn-sm' name='action' value='sendQuickMail-"+index+"'>\
+                        <span class='icon text-white-10'>\
+                            <i class='fas fa-check'></i>\
+                        </span>\
+                        <span class='text'>Send quick mail</span>\
+                    </button>\
+                    <button type='submit' class='btn btn-primary btn-icon-split btn-sm card-btn' name='action' value='sendCustomMail-"+index+"'>\
+                        <span class='icon text-white-10'>\
+                            <i class='fas fa-mail-bulk'></i>\
+                        </span>\
+                        <span class='text' style='font-size: 0.775rem;'>Send custom mail</span>\
+                    </button>\
+                    <button href='#' id= 'card-someone-"+index+"' class='btn btn-danger btn-icon-split btn-sm card-btn' name='action' value='sendToSomeone-"+index+"'>\
+                        <span class='icon text-white-10'>\
+                            <i class='fas fa-paper-plane'></i>\
+                        </span>\
+                        <span class='text' style='font-size: 0.805rem'>Send to someone</span>\
+                    </button>\
+                    <input class='border border-success rounded' type='text' name='to' style='width: 150px;' id='input-"+index+"'>\
+                </form>\
+            </div>\
+        </div>\
+    </div>"
+    $("#actionFull").append(card)
+    $("#card-"+index).append(cardBody)
+    <!-- Checking some mails -->
+    if (typeof(cardCategory) !== 'undefined') {
+        $("#card-body-"+index).append(cardCategory)
+    }
+    if (typeof(cardOurAddress) !== 'undefined') {
+        $("#card-body-"+index).append(cardOurAddress)
+    }
+    if (typeof(cardVictimAddress) !== 'undefined') {
+        $("#card-body-"+index).append(cardVictimAddress)
+    }
+    if (value['SENDQUICK'] === 'True') {
+        $("#sendQuick-"+index).css({"color":"green"})
+    }
+    if (value['FORWARDMAIL'] === 'True') {
+        $("#forwardMail-"+index).css({"color":"green"})
+        $("#input-"+index).val(value['FORWARDEDTO'])
+    }
+    if (value['DONE'] === 'True') {
+        $("#mailDone-"+index).css({"color":"green"})
+    }
+
+    $("#card-from-"+index).text(value['FROM'])
+    $("#card-subject-"+index).append(value['SUBJECT'])
+    $("#card-time-"+index).text(value['DATE'].slice(0, 10)+'-'+value['DATE'].slice(11, 16))
+
+    <!-- Checking some mails -->
+    if (typeof(cardCategory) !== 'undefined') {
+        $("#card-category-"+index).text(value['CATEGORY'])
+    }
+    else if (typeof(cardCategory) === 'undefined') {
+        $("#card-category-"+index).removeClass('border')
+    }
+    if (typeof(cardOurAddress) !== 'undefined') {
+        $("#card-our_address-"+index).text(value['OUR_ADDRESS'])
+    }
+    else if (typeof(cardOurAddress) === 'undefined') {
+        $("#card-our_address-"+index).removeClass('border')
+    }
+    
+    })
+}
+    <!-- End JQuery -->
+    {% endblock %}
+    {% block content %}
+    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+        <!-- Sidebar Toggle (Topbar) -->
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+        </button>
+    
+        <!-- Topbar Search -->
+        <form
+            class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                    aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+    
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-search fa-fw"></i>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                    aria-labelledby="searchDropdown">
+                    <form class="form-inline mr-auto w-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small"
+                                placeholder="Search for..." aria-label="Search"
+                                aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+    
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell fa-fw"></i>
+                    <!-- Counter - Alerts -->
+                    {% if fields.total_new_mails %}
+                        <span class="badge badge-danger badge-counter">{{ fields.total_new_mails }}+</span>
+                    {% else %}
+                        <span class="badge badge-danger badge-counter"></span>
+                    {% endif %}
+                    <span class="badge badge-danger badge-counter"></span>
+                </a>
+                <!-- Dropdown - Alerts -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    aria-labelledby="alertsDropdown">
+                    <h6 class="dropdown-header">
+                        New mails
+                    </h6>
+                    {% for key, value  in fields.new_mails.items %}
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <div class="mr-3">
+                                <div class="icon-circle bg-warning">
+                                    <i class="fas fa-exclamation-triangle text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">{{ value.date }}</div>
+                                <span class="font-weight-bold">{{ value.subject }}</span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                    <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                </div>
+            </li>
+    
+    
+            <div class="topbar-divider d-none d-sm-block"></div>
+    
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Byambadalai Sumiya</span>
+                    <img class="img-profile rounded-circle" src="{% static 'img/me.jpg' %}">
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Profile
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Settings
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Activity Log
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Logout
+                    </a>
+                </div>
+            </li>
+    
+        </ul>
+    
+    </nav>
+    
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Full actionable table</h1>
+            <form action="" method="get">
+                <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" name="exportData"
+                value="True">
+                    <i class="fas fa-download fa-sm text-white-50"></i> Export Data</button>
+                <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" name="syncData"
+            value="True">
+                    <i class="fas fa-sync fa-sm text-white-50"></i> Sync Mails</button>
+            </form>
+        </div>
+        <!-- End Page Heading -->
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">fixed mails</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {% if fields.fixed_mails >= 0 %}
+                                        {{ fields.fixed_mails }}
+                                    {% else %}
+                                        <div class="text-muted">
+                                            Loading
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">sent quick mails</div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                            {% if fields.quick_mails >= 0 %}
+                                                {{ fields.quick_mails }}
+                                            {% else %}
+                                                <div class="text-muted">
+                                                    Loading
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="progress progress-sm mr-2">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: 50%"
+                                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-reply-all fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Forwarded mails</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {% if fields.forwarded_mails >= 0 %}
+                                        {{ fields.forwarded_mails }}
+                                    {% else %}
+                                        <div class="text-muted">
+                                            Loading
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-cog fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">no action mails</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {% if fields.no_action_mail >= 0 %}
+                                        {{ fields.no_action_mail }}
+                                    {% else %}
+                                        <div class="text-muted">
+                                            Loading
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Latest mails</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Filter</div>
+                                <a class="dropdown-item" href="#" onclick="rmDone()">Remove done mails</a>
+                                <a class="dropdown-item" href="#">Action</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">To do</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="actionFull"></div>
+                </div>
+            </div>
+        </div>
+        <!-- End Content Row -->
+    </div>
+    <script>
+        function rmDone() {
+            $.each( data, function(index, value) {
+                if (value['DONE'] == 'True') {
+                    $("#card-"+index).remove()
+                }
+            })
+        }   
+    </script>
+    <!-- End Page Content -->
+    {% endblock content%}
