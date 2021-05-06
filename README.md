@@ -42,4 +42,5 @@ Quick Demo
 Quick Note
 ===============
 1) Make sure open it latest browser
+2) I DO NOT SUPPORT THIS
 
